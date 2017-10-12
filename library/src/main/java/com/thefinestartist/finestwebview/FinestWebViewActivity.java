@@ -1,6 +1,7 @@
 package com.thefinestartist.finestwebview;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
@@ -43,6 +44,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.nineoldandroids.view.ViewHelper;
 import com.thefinestartist.converters.UnitConverter;
 import com.thefinestartist.finestwebview.enums.Position;
@@ -1203,10 +1205,14 @@ public class FinestWebViewActivity extends AppCompatActivity
         // If we return true, onPageStarted, onPageFinished won't be called.
         return true;
       } else if (url.startsWith("tel:") || url.startsWith("sms:") || url.startsWith("smsto:") || url
-          .startsWith("mms:") || url.startsWith("mmsto:")) {
+          .startsWith("mms:") || url.startsWith("mmsto:") || url.startsWith("whatsapp:")) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        view.getContext().startActivity(intent);
+        try {
+          view.getContext().startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+          Toast.makeText(view.getContext(), "No app found to handle URL", Toast.LENGTH_SHORT).show();
+        }
         return true; // If we return true, onPageStarted, onPageFinished won't be called.
       }
       /*******************************************************
